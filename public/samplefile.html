@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Container com Largura Máxima usando CSS Grid</title>
+    <style>
+      :root {
+        --primary: #2b5086;
+        --secondary: #6b89bb;
+        --danger: #9b1c1c;
+        --danger-secondary: #db5959;
+        --white: #ffffff;
+        --grey: #ccc;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: system-ui;
+      }
+      /* Estilo personalizado para o alerta */
+      .alert {
+        padding: 10px;
+        border-radius: 4px;
+        margin: 20px;
+        font-size: 14px;
+      }
+      .alert-danger {
+        background-color: #f8d7da; /* Cor de fundo vermelha (cor de erro) */
+        color: #721c24; /* Cor do texto vermelho escura */
+        border: 1px solid #f5c6cb; /* Cor da borda vermelha clara */
+      }
+      .alert-warning {
+        background-color: #fff3cd; /* Cor de fundo amarela */
+        color: #856404; /* Cor do texto amarela escura */
+        border: 1px solid #ffeeba; /* Cor da borda amarela clara */
+      }
+      .alert-info {
+        background-color: #d1ecf1; /* Cor de fundo azul clara */
+        color: #0c5460; /* Cor do texto azul escura */
+        border: 1px solid #bee5eb; /* Cor da borda azul clara */
+      }
+      .icon-link-primary {
+        color: var(--primary);
+      }
+      .icon-link-primary:hover {
+        color: var(--secondary);
+        cursor: pointer;
+      }
+      .icon-link-secondary {
+        color: var(--secondary);
+      }
+      .icon-link-secondary:hover {
+        color: var(--primary);
+        cursor: pointer;
+      }
+      .icon-link-danger {
+        color: var(--danger);
+      }
+      .icon-link-danger:hover {
+        color: var(--danger-secondary);
+        cursor: pointer;
+      }
+      .btn,
+      .btn-light {
+        height: 32px;
+      }
+      .btn i,
+      .btn-light i {
+        margin-right: 6px;
+        padding-right: 12px; /* Adicione o espaço à direita da borda aqui */
+      }
+      .btn i {
+        border-right: 1px solid var(--grey);
+      }
+      .btn-light i {
+        border-right: 1px solid var(--primary);
+      }
+
+      .btn:hover i,
+      .btn-light:hover i {
+        border-right-color: var(
+          --white
+        ); /* Altera a cor da borda ao passar o mouse */
+      }
+      .btn {
+        cursor: pointer;
+        outline: 0;
+        color: var(--white);
+        background-color: var(--primary);
+        border-color: var(--primary);
+        display: inline-block;
+        font-weight: 400;
+        text-align: center;
+        border: 1px solid transparent;
+        padding: 0px 20px;
+        font-size: 14px;
+        border-radius: 0.25rem;
+        transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+          border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+      }
+      .btn:hover {
+        color: var(--white);
+        background-color: var(--secondary);
+        border-color: var(--secondary);
+      }
+      .btn-light {
+        cursor: pointer;
+        outline: 0;
+        color: var(--primary);
+        background-color: var(--white);
+        display: inline-block;
+        font-weight: 400;
+        text-align: center;
+        border: 1px solid var(--primary);
+        padding: 0px 20px;
+        font-size: 14px;
+        border-radius: 0.25rem;
+        transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+          border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+      }
+      .btn-light:hover {
+        color: var(--white);
+        background-color: var(--secondary);
+        border-color: var(--secondary);
+      }
+      .btn-fluid {
+        padding: 0px;
+        width: 100%;
+      }
+      .btn[disabled],
+      .btn-light[disabled] {
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+      .container {
+        max-width: 550px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 0px;
+      }
+      .container-fluid {
+        max-width: 100%;
+        width: 100%;
+        margin: 0 auto;
+        padding: 0px;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr); /* 12 colunas no grid */
+        grid-gap: 8px; /* Espaçamento entre colunas */
+        margin: 8px 0 8px 0; /* Espaçamento entre linhas */
+      }
+
+      /* Exemplo de classes de colunas no grid */
+      .col {
+        display: flex;
+        padding: 8px;
+        align-items: center;
+      }
+
+      .col-fluid {
+        display: flex;
+        padding: 0px;
+        align-items: center;
+      }
+
+      /* Defina a largura das colunas como um múltiplo do número de colunas desejado */
+      .col-1 {
+        grid-column: span 1;
+      }
+      .col-2 {
+        grid-column: span 2;
+      }
+      .col-3 {
+        grid-column: span 3;
+      }
+      .col-4 {
+        grid-column: span 4;
+      }
+      .col-5 {
+        grid-column: span 5;
+      }
+      .col-6 {
+        grid-column: span 6;
+      }
+      .col-7 {
+        grid-column: span 7;
+      }
+      .col-8 {
+        grid-column: span 8;
+      }
+      .col-9 {
+        grid-column: span 9;
+      }
+      .col-10 {
+        grid-column: span 10;
+      }
+      .col-11 {
+        grid-column: span 11;
+      }
+      .col-12 {
+        grid-column: span 12;
+      }
+
+      /* Classes para alinhamento do conteúdo */
+      .align-center {
+        justify-content: center;
+      }
+
+      .align-left {
+        justify-content: flex-start;
+      }
+
+      .align-right {
+        justify-content: flex-end;
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col col-2">
+          <button class="btn btn-fluid align-left">BTN</button>
+        </div>
+        <div class="col col-6 align-center">
+          <button class="btn btn-fluid">BTN</button>
+        </div>
+        <div class="col col-4 align-right">
+          <button class="btn btn-fluid" disabled>BTN</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-6">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-fluid col-4">
+                <i class="fa-solid fa-minus fa-xl icon-link-primary"></i>
+              </div>
+              <div class="col-fluid col-4 align-center">
+                <i class="fa-solid fa-xmark fa-xl icon-link-danger"></i>
+              </div>
+              <div class="col-fluid col-4 align-right">
+                <i class="fa-solid fa-plus fa-xl icon-link-primary"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col col-6">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-fluid col-4">
+                <i class="fa-solid fa-square-minus fa-xl icon-link-primary"></i>
+              </div>
+              <div class="col-fluid col-4 align-center">
+                <i class="fa-solid fa-square-xmark fa-xl icon-link-danger"></i>
+              </div>
+              <div class="col-fluid col-4 align-right">
+                <i class="fa-solid fa-square-plus fa-xl icon-link-primary"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-6 align-center">
+          <button class="btn"><i class="fas fa-camera"></i> BTN</button>
+        </div>
+        <div class="col col-6 align-center">
+          <button class="btn" disabled>
+            <i class="fas fa-camera"></i> BTN
+          </button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-6 align-center">
+          <button class="btn-light"><i class="fas fa-camera"></i> BTN</button>
+        </div>
+        <div class="col col-6 align-center">
+          <button class="btn-light" disabled>
+            <i class="fas fa-camera"></i> BTN
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="alert alert-info">Este é um alerta de informação.</div>
+    <div class="alert alert-danger">Este é um alerta de perigo.</div>
+    <div class="alert alert-warning">Este é um alerta de aviso.</div>
+  </body>
+</html>
