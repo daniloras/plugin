@@ -1,5 +1,5 @@
 
-import { CaptureUrlModule } from './modules/CaptureUrl';
+import CaptureUrlModule from './modules/CaptureUrl';
 import { MainTemplate } from './templates/Main';
 
 function App() {
