@@ -107,17 +107,18 @@ const CaptureUrlModule: React.FC = () => {
     }
   }
   
-  const generateCapture = async () => {
+  const generateCapture = async (images: string[]) => {
+    console.log(images)
     setIsProccessing(true);
     switch (capture) {
       case 1:
         await executeLoop(6);
-        await submitCapture();
+        await submitCapture(images);
         setIsProccessing(false);                                                                                                                                                                             
         break;
       case 2:
         captureScreen();
-        await submitCapture();
+        await submitCapture(images);
         setIsProccessing(false);
         break;
       default:
@@ -126,13 +127,13 @@ const CaptureUrlModule: React.FC = () => {
   }
 
 
-  const submitCapture = async () => {
+  const submitCapture = async (images: string[]) => {
     try {
       /**
        * BO: screenshot vai como vázio
        */
       const response = await axios.post('https://exemple.com/api/pdf/generate', {
-        images: screenshot,
+        images,
         currentUrl,
         ip,
       });
@@ -180,7 +181,7 @@ const CaptureUrlModule: React.FC = () => {
             <>
             {!isFinish ? (
             <button
-              onClick={() => generateCapture()}
+              onClick={() => generateCapture(screenshot)}
               type="button"
               className="mt-1 mb-1 w-full bg-transparent hover:bg-blue-800 text-blue-900 font-semibold hover:text-white py-2 px-4 border border-blue-800 hover:border-transparent rounded"
             >
