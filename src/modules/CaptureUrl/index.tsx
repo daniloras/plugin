@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 const CaptureUrlModule: React.FC = () => {
   const [capture, setCapture] = useState<number>(0);
   const [currentUrl, setCurrentUrl] = useState<string | undefined>('');
-  const [screenshot, setScreenshot] = useState<string[]>([]); 
+  const [screenshot, setScreenshot] = useState<Array<string>>([]);
   const [isProccessing, setIsProccessing] = useState<boolean>(false);
   const [isFinish, setIsFinish] = useState<boolean>(false);
   const [msgError, setMsgError] = useState<string | null>(null);
@@ -18,10 +18,6 @@ const CaptureUrlModule: React.FC = () => {
       .then(data => setIp(data.ip))
       .catch(error => console.log(error))
   }, []);
-
-  useEffect(() => {
-    console.log('Screenshot atualizado:', screenshot);
-  }, [screenshot]);
 
   useEffect(() => {
     getActiveUrl(); 
@@ -45,7 +41,7 @@ const CaptureUrlModule: React.FC = () => {
     });
   }
 
-  const scrollToNextVisibleArea = async () => {
+  const scrollToNextVisibleArea = async (timeout = 1000) => {
     chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
       const tab = tabs[0];
       const tabId = Number(tab.id);
@@ -59,7 +55,7 @@ const CaptureUrlModule: React.FC = () => {
         );
       });
     });
-    return new Promise((resolve) => setTimeout(resolve, 2000));
+    return new Promise((resolve) => setTimeout(resolve, timeout));
   };
 
   // const getHeightPage = async () => {
@@ -81,58 +77,61 @@ const CaptureUrlModule: React.FC = () => {
   //   chrome.tabs.reload(tabId, {}, () => { })
   // }
   
-  const captureScreen = async () => {
-    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
-
-      const tab = tabs[0];
-      const tabId = tab.id;
-      const windowId = tab.windowId;
-
-     // await reloadPage(Number(tabId));
-
-      if (tabId && windowId) {
-        chrome.tabs.captureVisibleTab(windowId, {}, (dataUrl) => {
-          setScreenshot((prevScreenshot) => [...prevScreenshot, dataUrl]);
-        });
-      }
+  const captureScreen = async (): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        if (!tabs || tabs.length === 0) {
+          return reject("Nenhuma aba ativa encontrada.");
+        }
+  
+        const tab = tabs[0];
+        const { id: tabId, windowId } = tab;
+  
+        if (tabId && windowId) {
+          chrome.tabs.captureVisibleTab(windowId, {}, (dataUrl) => {
+            if (chrome.runtime.lastError) {
+              return reject(chrome.runtime.lastError);
+            } else {
+              return resolve(dataUrl);
+            }
+          });
+        } else {
+          return reject("Falha ao capturar informações da aba.");
+        }
+      });
     });
-    return new Promise((resolve) => setTimeout(resolve, 1000));
   };
 
 
   async function executeLoop(value: number) {
+    setScreenshot([]);
+
+    let images: Array<string> = [];
     for (let i = 0; i < value; i++) {
-      await captureScreen();
+      const image = await captureScreen();
+      images.push(image);
+
+      setScreenshot((prevValue) => [...prevValue, image]);
       await scrollToNextVisibleArea();
     }
+    return images;
   }
   
   const generateCapture = async () => {
     setIsProccessing(true);
-    switch (capture) {
-      case 1:
-        await executeLoop(6);
-        await submitCapture();
-        setIsProccessing(false);                                                                                                                                                                             
-        break;
-      case 2:
-        captureScreen();
-        await submitCapture();
-        setIsProccessing(false);
-        break;
-      default:
-        break;
-    }
+
+    const length = capture === 1 ? 7 : 1;
+    const images = await executeLoop(length);
+
+    await submitCapture(images);
+    setIsProccessing(false);
   }
 
 
-  const submitCapture = async () => {
+  const submitCapture = async (images: Array<string>) => {
     try {
-      /**
-       * BO: screenshot vai como vázio
-       */
       const response = await axios.post('https://exemple.com/api/pdf/generate', {
-        images: screenshot,
+        images,
         currentUrl,
         ip,
       });
